@@ -59,20 +59,22 @@ export class DataSourceService {
 
     try {
       this.logger.log(`Fetching data from ${source.name} (${source.url})`);
-      
+
       const response = await this.httpClient.get(source.url);
-      
+
       if (source.id === 'jsonplaceholder') {
         return Array.isArray(response.data) ? response.data : [response.data];
       }
-      
+
       if (source.id === 'reqres') {
         return response.data.data || [];
       }
 
       return Array.isArray(response.data) ? response.data : [response.data];
     } catch (error) {
-      this.logger.error(`Failed to fetch data from ${source.id}: ${error.message}`);
+      this.logger.error(
+        `Failed to fetch data from ${source.id}: ${error.message}`,
+      );
       throw error;
     }
   }
@@ -86,6 +88,3 @@ export class DataSourceService {
     }));
   }
 }
-
-
-

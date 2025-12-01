@@ -10,7 +10,8 @@ export class StorageService {
   private readonly useLocalStack: boolean;
 
   constructor(private readonly configService: ConfigService) {
-    this.useLocalStack = this.configService.get('USE_LOCALSTACK', 'false') === 'true';
+    this.useLocalStack =
+      this.configService.get('USE_LOCALSTACK', 'false') === 'true';
     this.bucketName = this.configService.get('S3_BUCKET_NAME', 'twl-raw-data');
 
     const s3Config: any = {
@@ -18,7 +19,10 @@ export class StorageService {
     };
 
     if (this.useLocalStack) {
-      s3Config.endpoint = this.configService.get('S3_ENDPOINT', 'http://localhost:9000');
+      s3Config.endpoint = this.configService.get(
+        'S3_ENDPOINT',
+        'http://localhost:9000',
+      );
       s3Config.forcePathStyle = true;
       s3Config.credentials = {
         accessKeyId: 'minioadmin',
@@ -36,19 +40,24 @@ export class StorageService {
     payload: any,
   ): Promise<string> {
     const key = `raw/source=${source}/ingest_date=${ingestDate}/${itemId}.json`;
-    
+
     try {
-      const command = new PutObjectCommand({
+      const commandParams: any = {
         Bucket: this.bucketName,
         Key: key,
         Body: JSON.stringify(payload, null, 2),
         ContentType: 'application/json',
-        ServerSideEncryption: 'AES256',
-      });
+      };
+
+      if (!this.useLocalStack) {
+        commandParams.ServerSideEncryption = 'AES256';
+      }
+
+      const command = new PutObjectCommand(commandParams);
 
       await this.s3Client.send(command);
       this.logger.debug(`Stored raw data: ${key}`);
-      
+
       return key;
     } catch (error) {
       this.logger.error(`Failed to store raw data: ${error.message}`);
@@ -56,6 +65,3 @@ export class StorageService {
     }
   }
 }
-
-
-

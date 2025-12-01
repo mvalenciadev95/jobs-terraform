@@ -37,6 +37,3 @@ export const CuratedRecordSchema = SchemaFactory.createForClass(CuratedRecord);
 
 CuratedRecordSchema.index({ sourceId: 1, capturedAt: -1 });
 CuratedRecordSchema.index({ fingerprint: 1 });
-
-
-

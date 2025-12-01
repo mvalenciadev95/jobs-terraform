@@ -13,7 +13,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get('JWT_SECRET', 'your-secret-key-change-in-production'),
+      secretOrKey: configService.get(
+        'JWT_SECRET',
+        'your-secret-key-change-in-production',
+      ),
     });
   }
 
@@ -25,6 +28,3 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return { userId: user.id, email: user.email, role: user.role };
   }
 }
-
-
-

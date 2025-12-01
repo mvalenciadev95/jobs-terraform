@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import axios from 'axios'
 
 interface Record {
@@ -24,11 +24,7 @@ export default function RecordsList() {
   const [total, setTotal] = useState(0)
   const limit = 20
 
-  useEffect(() => {
-    fetchRecords()
-  }, [page])
-
-  const fetchRecords = async () => {
+  const fetchRecords = useCallback(async () => {
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/api/reporting/records`,
@@ -46,7 +42,11 @@ export default function RecordsList() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [page, limit])
+
+  useEffect(() => {
+    fetchRecords()
+  }, [fetchRecords])
 
   if (loading) {
     return (

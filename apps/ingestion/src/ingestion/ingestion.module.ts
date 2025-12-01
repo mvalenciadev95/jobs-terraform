@@ -7,10 +7,12 @@ import { DataSourceService } from './data-source.service';
 
 @Module({
   controllers: [IngestionController],
-  providers: [IngestionService, StorageService, QueueService, DataSourceService],
+  providers: [
+    IngestionService,
+    StorageService,
+    QueueService,
+    DataSourceService,
+  ],
   exports: [IngestionService],
 })
 export class IngestionModule {}
-
-
-

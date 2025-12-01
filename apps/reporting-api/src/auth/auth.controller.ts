@@ -12,7 +12,10 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'User login', description: 'Authenticate user and get JWT token' })
+  @ApiOperation({
+    summary: 'User login',
+    description: 'Authenticate user and get JWT token',
+  })
   @ApiResponse({
     status: 200,
     description: 'Login successful',
@@ -28,7 +31,10 @@ export class AuthController {
   }
 
   @Post('register')
-  @ApiOperation({ summary: 'User registration', description: 'Register a new user' })
+  @ApiOperation({
+    summary: 'User registration',
+    description: 'Register a new user',
+  })
   @ApiResponse({
     status: 201,
     description: 'User registered successfully',
@@ -49,4 +55,3 @@ export class AuthController {
     return { message: 'User registered successfully', userId: user.id };
   }
 }
-

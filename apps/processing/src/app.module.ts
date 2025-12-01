@@ -11,7 +11,9 @@ import { HealthModule } from './health/health.module';
     }),
     MongooseModule.forRootAsync({
       useFactory: () => {
-        const mongoUri = process.env.MONGODB_URI || 'mongodb://admin:admin@localhost:27017/twl_pipeline?authSource=admin';
+        const mongoUri =
+          process.env.MONGODB_URI ||
+          'mongodb://admin:admin@localhost:27017/twl_pipeline?authSource=admin';
         return {
           uri: mongoUri,
         };
@@ -22,6 +24,3 @@ import { HealthModule } from './health/health.module';
   ],
 })
 export class AppModule {}
-
-
-

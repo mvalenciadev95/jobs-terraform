@@ -10,7 +10,8 @@ export class StorageService {
   private readonly useLocalStack: boolean;
 
   constructor(private readonly configService: ConfigService) {
-    this.useLocalStack = this.configService.get('USE_LOCALSTACK', 'false') === 'true';
+    this.useLocalStack =
+      this.configService.get('USE_LOCALSTACK', 'false') === 'true';
     this.bucketName = this.configService.get('S3_BUCKET_NAME', 'twl-raw-data');
 
     const s3Config: any = {
@@ -18,7 +19,10 @@ export class StorageService {
     };
 
     if (this.useLocalStack) {
-      s3Config.endpoint = this.configService.get('S3_ENDPOINT', 'http://localhost:9000');
+      s3Config.endpoint = this.configService.get(
+        'S3_ENDPOINT',
+        'http://localhost:9000',
+      );
       s3Config.forcePathStyle = true;
       s3Config.credentials = {
         accessKeyId: 'minioadmin',
@@ -38,14 +42,13 @@ export class StorageService {
 
       const response = await this.s3Client.send(command);
       const body = await response.Body.transformToString();
-      
+
       return JSON.parse(body);
     } catch (error) {
-      this.logger.error(`Failed to get raw data from ${s3Key}: ${error.message}`);
+      this.logger.error(
+        `Failed to get raw data from ${s3Key}: ${error.message}`,
+      );
       throw error;
     }
   }
 }
-
-
-

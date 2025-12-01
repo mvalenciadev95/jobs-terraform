@@ -28,10 +28,8 @@ export class ProcessingRecord extends Document {
   curatedRecordId: string;
 }
 
-export const ProcessingRecordSchema = SchemaFactory.createForClass(ProcessingRecord);
+export const ProcessingRecordSchema =
+  SchemaFactory.createForClass(ProcessingRecord);
 
 ProcessingRecordSchema.index({ messageId: 1 });
 ProcessingRecordSchema.index({ status: 1 });
-
-
-

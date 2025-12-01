@@ -22,7 +22,8 @@ async function bootstrap() {
   const port = process.env.PORT || 3002;
   await app.listen(port);
   console.log(`Processing service running on port ${port}`);
-  console.log(`Swagger documentation available at http://localhost:${port}/api`);
+  console.log(
+    `Swagger documentation available at http://localhost:${port}/api`,
+  );
 }
 bootstrap();
-

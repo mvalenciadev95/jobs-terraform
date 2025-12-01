@@ -1,12 +1,25 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, PipelineStage } from 'mongoose';
 import { CuratedRecord } from './schemas/curated-record.schema';
 
 export interface AnalyticsFilters {
   sourceId?: string;
   startDate?: string;
   endDate?: string;
+}
+
+export interface FindAllResult {
+  records: any[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface AnalyticsResult {
+  total: number;
+  bySource: any[];
+  byDate: any[];
 }
 
 @Injectable()
@@ -18,7 +31,11 @@ export class ReportingService {
     private readonly curatedRecordModel: Model<CuratedRecord>,
   ) {}
 
-  async findAll(filters?: AnalyticsFilters, limit = 100, offset = 0) {
+  async findAll(
+    filters?: AnalyticsFilters,
+    limit = 100,
+    offset = 0,
+  ): Promise<FindAllResult> {
     const query: any = {};
 
     if (filters?.sourceId) {
@@ -53,11 +70,11 @@ export class ReportingService {
     };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<any> {
     return this.curatedRecordModel.findById(id).lean();
   }
 
-  async getAnalytics(filters?: AnalyticsFilters) {
+  async getAnalytics(filters?: AnalyticsFilters): Promise<AnalyticsResult> {
     const matchQuery: any = {};
 
     if (filters?.sourceId) {
@@ -74,7 +91,7 @@ export class ReportingService {
       }
     }
 
-    const pipeline = [
+    const pipeline: PipelineStage[] = [
       { $match: matchQuery },
       {
         $group: {
@@ -88,12 +105,12 @@ export class ReportingService {
           },
         },
       },
-      { $sort: { count: -1 } },
+      { $sort: { count: -1 as const } },
     ];
 
     const bySource = await this.curatedRecordModel.aggregate(pipeline);
 
-    const byDatePipeline = [
+    const byDatePipeline: PipelineStage[] = [
       { $match: matchQuery },
       {
         $group: {
@@ -103,7 +120,7 @@ export class ReportingService {
           count: { $sum: 1 },
         },
       },
-      { $sort: { _id: -1 } },
+      { $sort: { _id: -1 as const } },
       { $limit: 30 },
     ];
 
@@ -118,6 +135,3 @@ export class ReportingService {
     };
   }
 }
-
-
-

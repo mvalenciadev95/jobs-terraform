@@ -17,6 +17,3 @@ export class LoginResponseDto {
     role: string;
   };
 }
-
-
-

@@ -4,8 +4,14 @@ import { ProcessingService } from './processing.service';
 import { ProcessingController } from './processing.controller';
 import { QueueConsumerService } from './queue-consumer.service';
 import { StorageService } from './storage.service';
-import { CuratedRecord, CuratedRecordSchema } from './schemas/curated-record.schema';
-import { ProcessingRecord, ProcessingRecordSchema } from './schemas/processing-record.schema';
+import {
+  CuratedRecord,
+  CuratedRecordSchema,
+} from './schemas/curated-record.schema';
+import {
+  ProcessingRecord,
+  ProcessingRecordSchema,
+} from './schemas/processing-record.schema';
 
 @Module({
   imports: [
@@ -19,6 +25,3 @@ import { ProcessingRecord, ProcessingRecordSchema } from './schemas/processing-r
   exports: [ProcessingService],
 })
 export class ProcessingModule {}
-
-
-
