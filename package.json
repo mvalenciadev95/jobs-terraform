@@ -1,0 +1,24 @@
+{
+  "name": "twl-data-pipeline",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install && npm run install:apps",
+    "install:apps": "npm install --prefix apps/ingestion && npm install --prefix apps/processing && npm install --prefix apps/reporting-api && npm install --prefix apps/web-frontend",
+    "dev": "concurrently \"npm run dev:ingestion\" \"npm run dev:processing\" \"npm run dev:reporting\" \"npm run dev:frontend\"",
+    "dev:ingestion": "npm run start:dev --prefix apps/ingestion",
+    "dev:processing": "npm run start:dev --prefix apps/processing",
+    "dev:reporting": "npm run start:dev --prefix apps/reporting-api",
+    "dev:frontend": "npm run dev --prefix apps/web-frontend",
+    "build": "npm run build --prefix apps/ingestion && npm run build --prefix apps/processing && npm run build --prefix apps/reporting-api && npm run build --prefix apps/web-frontend",
+    "test": "npm run test --prefix apps/ingestion && npm run test --prefix apps/processing && npm run test --prefix apps/reporting-api && npm run test --prefix apps/web-frontend",
+    "lint": "npm run lint --prefix apps/ingestion && npm run lint --prefix apps/processing && npm run lint --prefix apps/reporting-api && npm run lint --prefix apps/web-frontend",
+    "migration:run": "npm run migration:run --prefix apps/reporting-api"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
+
+
+
