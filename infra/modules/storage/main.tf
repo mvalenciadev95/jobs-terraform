@@ -204,6 +204,7 @@ resource "aws_secretsmanager_secret_version" "postgres" {
 }
 
 resource "aws_secretsmanager_secret" "mongodb" {
+  count = 0
   name = "${var.environment}-mongodb-credentials"
 
   tags = {
@@ -212,12 +213,13 @@ resource "aws_secretsmanager_secret" "mongodb" {
 }
 
 resource "aws_secretsmanager_secret_version" "mongodb" {
-  secret_id = aws_secretsmanager_secret.mongodb.id
+  count     = 0
+  secret_id = aws_secretsmanager_secret.mongodb[0].id
   secret_string = jsonencode({
     username = var.mongodb_username
     password = var.mongodb_password
-    endpoint = aws_docdb_cluster.mongodb.endpoint
-    port     = aws_docdb_cluster.mongodb.port
+    endpoint = aws_docdb_cluster.mongodb[0].endpoint
+    port     = aws_docdb_cluster.mongodb[0].port
   })
 }
 

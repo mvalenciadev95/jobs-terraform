@@ -62,6 +62,7 @@ module "compute" {
   postgres_db_name       = module.storage.postgres_db_name
   postgres_username      = module.storage.postgres_username
   postgres_password      = module.storage.postgres_password
+  jwt_secret             = var.jwt_secret
 }
 
 module "observability" {
