@@ -51,8 +51,8 @@ jobs:
 
       - name: Terraform Format Check
         run: |
-          cd infra/envs/dev
-          terraform fmt -check
+          cd infra
+          terraform fmt -check -recursive
 
       - name: Terraform Init
         run: |

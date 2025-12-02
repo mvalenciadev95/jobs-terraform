@@ -10,6 +10,3 @@ variable "jwt_secret" {
   default     = ""
   sensitive   = true
 }
-
-
-
