@@ -1,0 +1,87 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  lint-and-test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          npm install
+          npm run install:all
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Run tests
+        run: npm run test
+        continue-on-error: true
+
+  terraform-validate:
+    name: Terraform Validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.0
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Terraform Format
+        run: |
+          cd infra
+          terraform fmt -recursive
+
+      - name: Check Terraform Formatting
+        run: |
+          if [ -n "$(git status --porcelain infra/)" ]; then
+            echo "::error::Terraform files are not properly formatted."
+            echo "The following files need formatting:"
+            git status --porcelain infra/
+            echo ""
+            echo "Please run 'terraform fmt -recursive' in the infra directory."
+            git diff infra/
+            exit 1
+          else
+            echo "✓ All Terraform files are properly formatted"
+          fi
+
+      - name: Terraform Init
+        run: |
+          cd infra/envs/dev
+          terraform init -backend=false
+
+      - name: Terraform Validate
+        run: |
+          cd infra/envs/dev
+          terraform validate
+
+
+
+

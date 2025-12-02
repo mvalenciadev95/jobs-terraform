@@ -1,0 +1,25 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type CuratedRecord {
+  capturedAt: DateTime!
+  dedupStatus: String!
+  fingerprint: String!
+  normalizedFields: String!
+  originalId: String!
+  processedAt: DateTime!
+  rawDataUri: String!
+  sourceId: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Query {
+  analytics(endDate: String, sourceId: String, startDate: String): String!
+  record(id: String!): CuratedRecord!
+  records(endDate: String, limit: Int = 100, offset: Int = 0, sourceId: String, startDate: String): [CuratedRecord!]!
+}
