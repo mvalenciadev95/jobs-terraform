@@ -61,18 +61,18 @@ resource "aws_sqs_queue_redrive_policy" "processing" {
 }
 
 resource "aws_db_instance" "postgres" {
-  identifier             = "${var.environment}-postgres"
-  engine                 = "postgres"
-  engine_version         = "14.9"
-  instance_class         = "db.t3.micro"
-  allocated_storage      = 20
-  storage_encrypted      = true
-  db_name                = "twl_pipeline"
-  username               = var.postgres_username
-  password               = var.postgres_password
-  vpc_security_group_ids = [aws_security_group.postgres.id]
-  db_subnet_group_name   = aws_db_subnet_group.main.name
-  skip_final_snapshot    = var.environment == "dev"
+  identifier              = "${var.environment}-postgres"
+  engine                  = "postgres"
+  engine_version          = "14.9"
+  instance_class          = "db.t3.micro"
+  allocated_storage       = 20
+  storage_encrypted       = true
+  db_name                 = "twl_pipeline"
+  username                = var.postgres_username
+  password                = var.postgres_password
+  vpc_security_group_ids  = [aws_security_group.postgres.id]
+  db_subnet_group_name    = aws_db_subnet_group.main.name
+  skip_final_snapshot     = var.environment == "dev"
   backup_retention_period = var.environment == "prod" ? 7 : 1
 
   tags = {
@@ -114,16 +114,16 @@ resource "aws_security_group" "postgres" {
 }
 
 resource "aws_docdb_cluster" "mongodb" {
-  count                  = 0
-  cluster_identifier     = "${var.environment}-mongodb"
-  engine                 = "docdb"
-  master_username        = var.mongodb_username
-  master_password        = var.mongodb_password
-  db_subnet_group_name   = aws_docdb_subnet_group.main.name
-  vpc_security_group_ids = [aws_security_group.mongodb.id]
-  skip_final_snapshot    = var.environment == "dev"
+  count                   = 0
+  cluster_identifier      = "${var.environment}-mongodb"
+  engine                  = "docdb"
+  master_username         = var.mongodb_username
+  master_password         = var.mongodb_password
+  db_subnet_group_name    = aws_docdb_subnet_group.main.name
+  vpc_security_group_ids  = [aws_security_group.mongodb.id]
+  skip_final_snapshot     = var.environment == "dev"
   backup_retention_period = var.environment == "prod" ? 7 : 1
-  storage_encrypted      = true
+  storage_encrypted       = true
 
   tags = {
     Name = "${var.environment}-mongodb"
@@ -213,8 +213,8 @@ resource "aws_secretsmanager_secret" "mongodb" {
 }
 
 resource "aws_secretsmanager_secret_version" "mongodb" {
-  count         = 0
-  secret_id     = aws_secretsmanager_secret.mongodb[0].id
+  count     = 0
+  secret_id = aws_secretsmanager_secret.mongodb[0].id
   secret_string = jsonencode({
     username = var.mongodb_username
     password = var.mongodb_password

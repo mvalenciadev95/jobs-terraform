@@ -210,11 +210,11 @@ resource "aws_lambda_function" "processing" {
 
   environment {
     variables = {
-      S3_BUCKET_NAME     = var.s3_bucket_name
-      SQS_QUEUE_URL      = var.sqs_queue_url
-      MONGODB_URI        = var.mongodb_connection_uri
-      MAX_CONCURRENCY    = "5"
-      AWS_REGION         = "us-east-1"
+      S3_BUCKET_NAME  = var.s3_bucket_name
+      SQS_QUEUE_URL   = var.sqs_queue_url
+      MONGODB_URI     = var.mongodb_connection_uri
+      MAX_CONCURRENCY = "5"
+      AWS_REGION      = "us-east-1"
     }
   }
 
@@ -224,9 +224,9 @@ resource "aws_lambda_function" "processing" {
 }
 
 resource "aws_lambda_event_source_mapping" "processing" {
-  event_source_arn                  = var.sqs_queue_arn
-  function_name                     = aws_lambda_function.processing.arn
-  batch_size                        = 10
+  event_source_arn                   = var.sqs_queue_arn
+  function_name                      = aws_lambda_function.processing.arn
+  batch_size                         = 10
   maximum_batching_window_in_seconds = 5
 }
 
@@ -235,9 +235,9 @@ resource "aws_lambda_function" "reporting" {
   function_name = "${var.environment}-reporting"
   role          = aws_iam_role.reporting_lambda.arn
   handler       = "main.handler"
-  runtime       = "nodejs18.x"
-  timeout      = 30
-  memory_size   = 512
+  runtime     = "nodejs18.x"
+  timeout     = 30
+  memory_size = 512
 
   vpc_config {
     subnet_ids         = var.private_subnet_ids
@@ -246,12 +246,12 @@ resource "aws_lambda_function" "reporting" {
 
   environment {
     variables = {
-      POSTGRES_HOST     = var.postgres_endpoint
-      POSTGRES_DB       = var.postgres_db_name
-      POSTGRES_USER     = var.postgres_username
-      MONGODB_URI       = var.mongodb_connection_uri
-      JWT_SECRET        = var.jwt_secret
-      AWS_REGION        = "us-east-1"
+      POSTGRES_HOST = var.postgres_endpoint
+      POSTGRES_DB   = var.postgres_db_name
+      POSTGRES_USER = var.postgres_username
+      MONGODB_URI   = var.mongodb_connection_uri
+      JWT_SECRET    = var.jwt_secret
+      AWS_REGION    = "us-east-1"
     }
   }
 
