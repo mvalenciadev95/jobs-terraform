@@ -28,7 +28,6 @@ output "postgres_password" {
 }
 
 output "mongodb_connection_uri" {
-  value = var.mongodb_connection_uri != "" ? var.mongodb_connection_uri : "mongodb://admin:admin@localhost:27017/twl_pipeline?authSource=admin"
+  value     = var.mongodb_connection_uri != "" ? var.mongodb_connection_uri : "mongodb://admin:admin@localhost:27017/twl_pipeline?authSource=admin"
   sensitive = false
 }
-

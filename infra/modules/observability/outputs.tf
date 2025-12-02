@@ -6,5 +6,3 @@ output "log_groups" {
   ]
 }
 
-
-

@@ -72,5 +72,3 @@ variable "jwt_secret" {
   default     = ""
 }
 
-
-
