@@ -235,9 +235,9 @@ resource "aws_lambda_function" "reporting" {
   function_name = "${var.environment}-reporting"
   role          = aws_iam_role.reporting_lambda.arn
   handler       = "main.handler"
-  runtime     = "nodejs18.x"
-  timeout     = 30
-  memory_size = 512
+  runtime       = "nodejs18.x"
+  timeout       = 30
+  memory_size   = 512
 
   vpc_config {
     subnet_ids         = var.private_subnet_ids
