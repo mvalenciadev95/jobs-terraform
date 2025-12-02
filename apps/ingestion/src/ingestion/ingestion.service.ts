@@ -22,32 +22,34 @@ export class IngestionService {
 
   async ingestAllSources() {
     const sources = this.dataSourceService.getSources();
-    
+
     for (const source of sources) {
       try {
         await this.ingestSource(source.id);
       } catch (error) {
-        this.logger.error(`Failed to ingest source ${source.id}: ${error.message}`);
+        this.logger.error(
+          `Failed to ingest source ${source.id}: ${error.message}`,
+        );
       }
     }
   }
 
   async ingestSource(sourceId: string) {
     this.logger.log(`Ingesting data from source: ${sourceId}`);
-    
+
     const source = this.dataSourceService.getSource(sourceId);
     if (!source) {
       throw new Error(`Source ${sourceId} not found`);
     }
 
     const data = await this.dataSourceService.fetchData(source);
-    
+
     const ingestDate = new Date().toISOString().split('T')[0];
     const timestamp = Date.now();
-    
+
     for (const item of data) {
       const itemId = `${sourceId}-${item.id || timestamp}-${Math.random().toString(36).substr(2, 9)}`;
-      
+
       const rawPayload = {
         id: itemId,
         source: sourceId,
@@ -74,7 +76,9 @@ export class IngestionService {
       this.logger.debug(`Ingested item ${itemId} from ${sourceId}`);
     }
 
-    this.logger.log(`Completed ingestion for source: ${sourceId}, items: ${data.length}`);
+    this.logger.log(
+      `Completed ingestion for source: ${sourceId}, items: ${data.length}`,
+    );
   }
 
   private hashPayload(payload: any): string {
@@ -88,6 +92,3 @@ export class IngestionService {
     return Math.abs(hash).toString(36);
   }
 }
-
-
-

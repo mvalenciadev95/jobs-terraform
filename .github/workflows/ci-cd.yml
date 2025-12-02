@@ -7,7 +7,6 @@ on:
     branches: [main, dev]
 
 env:
-  AWS_REGION: us-east-1
   NODE_VERSION: '18'
 
 jobs:
@@ -49,10 +48,29 @@ jobs:
         with:
           terraform_version: 1.5.0
 
-      - name: Terraform Format Check
+      - name: Configure Git
         run: |
-          cd infra/envs/dev
-          terraform fmt -check
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Terraform Format
+        run: |
+          cd infra
+          terraform fmt -recursive
+
+      - name: Check Terraform Formatting
+        run: |
+          if [ -n "$(git status --porcelain infra/)" ]; then
+            echo "::error::Terraform files are not properly formatted."
+            echo "The following files need formatting:"
+            git status --porcelain infra/
+            echo ""
+            echo "Please run 'terraform fmt -recursive' in the infra directory."
+            git diff infra/
+            exit 1
+          else
+            echo "✓ All Terraform files are properly formatted"
+          fi
 
       - name: Terraform Init
         run: |
@@ -64,93 +82,6 @@ jobs:
           cd infra/envs/dev
           terraform validate
 
-  terraform-plan:
-    name: Terraform Plan
-    runs-on: ubuntu-latest
-    needs: [lint-and-test, terraform-validate]
-    if: github.event_name == 'pull_request'
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.5.0
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Terraform Init
-        run: |
-          cd infra/envs/dev
-          terraform init
-
-      - name: Terraform Plan
-        run: |
-          cd infra/envs/dev
-          terraform plan -out=tfplan
-
-      - name: Comment PR
-        uses: actions/github-script@v7
-        if: github.event_name == 'pull_request'
-        with:
-          script: |
-            const output = `#### Terraform Plan 📖
-            \`\`\`
-            ${process.env.PLAN}
-            \`\`\`
-            *Pusher: @${{ github.actor }}, Action: \`${{ github.event.action }}\`*`;
-
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
-
-  terraform-apply:
-    name: Terraform Apply
-    runs-on: ubuntu-latest
-    needs: [lint-and-test, terraform-validate]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    environment: production
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.5.0
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Terraform Init
-        run: |
-          cd infra/envs/prod
-          terraform init
-
-      - name: Terraform Plan
-        run: |
-          cd infra/envs/prod
-          terraform plan -out=tfplan
-
-      - name: Terraform Apply
-        run: |
-          cd infra/envs/prod
-          terraform apply -auto-approve tfplan
 
 
 

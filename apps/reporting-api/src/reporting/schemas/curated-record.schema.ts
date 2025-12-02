@@ -3,11 +3,8 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { Document } from 'mongoose';
 
 @ObjectType()
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, id: true })
 export class CuratedRecord extends Document {
-  @Field()
-  _id: string;
-
   @Field()
   @Prop({ required: true, index: true })
   sourceId: string;
@@ -47,6 +44,3 @@ export class CuratedRecord extends Document {
 }
 
 export const CuratedRecordSchema = SchemaFactory.createForClass(CuratedRecord);
-
-
-

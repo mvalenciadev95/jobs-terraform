@@ -13,7 +13,9 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('TWL Data Pipeline API')
-    .setDescription('API documentation for TWL Data Pipeline - Reporting Service')
+    .setDescription(
+      'API documentation for TWL Data Pipeline - Reporting Service',
+    )
     .setVersion('1.0')
     .addBearerAuth(
       {
@@ -40,7 +42,8 @@ async function bootstrap() {
   const port = process.env.PORT || 3003;
   await app.listen(port);
   console.log(`Reporting API running on port ${port}`);
-  console.log(`Swagger documentation available at http://localhost:${port}/api`);
+  console.log(
+    `Swagger documentation available at http://localhost:${port}/api`,
+  );
 }
 bootstrap();
-

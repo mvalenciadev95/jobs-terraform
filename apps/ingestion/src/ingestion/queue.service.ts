@@ -10,7 +10,8 @@ export class QueueService {
   private readonly useLocalStack: boolean;
 
   constructor(private readonly configService: ConfigService) {
-    this.useLocalStack = this.configService.get('USE_LOCALSTACK', 'false') === 'true';
+    this.useLocalStack =
+      this.configService.get('USE_LOCALSTACK', 'false') === 'true';
     this.queueUrl = this.configService.get('SQS_QUEUE_URL', '');
 
     const sqsConfig: any = {
@@ -18,7 +19,10 @@ export class QueueService {
     };
 
     if (this.useLocalStack) {
-      sqsConfig.endpoint = this.configService.get('SQS_ENDPOINT', 'http://localhost:4566');
+      sqsConfig.endpoint = this.configService.get(
+        'SQS_ENDPOINT',
+        'http://localhost:4566',
+      );
       sqsConfig.credentials = {
         accessKeyId: 'test',
         secretAccessKey: 'test',
@@ -49,6 +53,3 @@ export class QueueService {
     }
   }
 }
-
-
-

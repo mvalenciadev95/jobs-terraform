@@ -50,4 +50,3 @@ variable "mongodb_connection_uri" {
   type        = string
   default     = ""
 }
-

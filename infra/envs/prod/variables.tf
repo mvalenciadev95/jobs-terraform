@@ -4,5 +4,9 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-
-
+variable "jwt_secret" {
+  description = "JWT secret for authentication"
+  type        = string
+  default     = ""
+  sensitive   = true
+}

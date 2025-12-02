@@ -11,9 +11,11 @@ export class ReportingResolver {
     @Args('sourceId', { nullable: true }) sourceId?: string,
     @Args('startDate', { nullable: true }) startDate?: string,
     @Args('endDate', { nullable: true }) endDate?: string,
-    @Args('limit', { type: () => Int, nullable: true, defaultValue: 100 }) limit?: number,
-    @Args('offset', { type: () => Int, nullable: true, defaultValue: 0 }) offset?: number,
-  ) {
+    @Args('limit', { type: () => Int, nullable: true, defaultValue: 100 })
+    limit?: number,
+    @Args('offset', { type: () => Int, nullable: true, defaultValue: 0 })
+    offset?: number,
+  ): Promise<CuratedRecord[]> {
     const result = await this.reportingService.findAll(
       { sourceId, startDate, endDate },
       limit,
@@ -23,7 +25,7 @@ export class ReportingResolver {
   }
 
   @Query(() => CuratedRecord, { name: 'record' })
-  async getRecord(@Args('id') id: string) {
+  async getRecord(@Args('id') id: string): Promise<CuratedRecord> {
     return this.reportingService.findOne(id);
   }
 
@@ -32,7 +34,7 @@ export class ReportingResolver {
     @Args('sourceId', { nullable: true }) sourceId?: string,
     @Args('startDate', { nullable: true }) startDate?: string,
     @Args('endDate', { nullable: true }) endDate?: string,
-  ) {
+  ): Promise<string> {
     const analytics = await this.reportingService.getAnalytics({
       sourceId,
       startDate,
@@ -41,6 +43,3 @@ export class ReportingResolver {
     return JSON.stringify(analytics);
   }
 }
-
-
-

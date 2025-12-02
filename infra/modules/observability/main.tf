@@ -35,7 +35,7 @@ resource "aws_cloudwatch_metric_alarm" "ingestion_errors" {
   statistic           = "Sum"
   threshold           = 5
   alarm_description   = "This metric monitors ingestion lambda errors"
-  alarm_actions       = var.environment == "prod" ? [aws_sns_topic.alerts.arn] : []
+  alarm_actions       = var.environment == "prod" ? [aws_sns_topic.alerts[0].arn] : []
 
   dimensions = {
     FunctionName = "${var.environment}-ingestion"
@@ -56,7 +56,7 @@ resource "aws_cloudwatch_metric_alarm" "processing_errors" {
   statistic           = "Sum"
   threshold           = 5
   alarm_description   = "This metric monitors processing lambda errors"
-  alarm_actions       = var.environment == "prod" ? [aws_sns_topic.alerts.arn] : []
+  alarm_actions       = var.environment == "prod" ? [aws_sns_topic.alerts[0].arn] : []
 
   dimensions = {
     FunctionName = "${var.environment}-processing"
@@ -77,7 +77,7 @@ resource "aws_cloudwatch_metric_alarm" "sqs_dlq_messages" {
   statistic           = "Average"
   threshold           = 0
   alarm_description   = "This metric monitors DLQ messages"
-  alarm_actions       = var.environment == "prod" ? [aws_sns_topic.alerts.arn] : []
+  alarm_actions       = var.environment == "prod" ? [aws_sns_topic.alerts[0].arn] : []
 
   dimensions = {
     QueueName = "${var.environment}-processing-dlq"
@@ -103,6 +103,3 @@ resource "aws_sns_topic_subscription" "email" {
   protocol  = "email"
   endpoint  = var.alert_email
 }
-
-
-

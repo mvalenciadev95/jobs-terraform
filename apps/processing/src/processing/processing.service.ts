@@ -49,11 +49,11 @@ export class ProcessingService {
       );
 
       const rawData = await this.storageService.getRawData(message.s3Key);
-      
+
       const curatedData = this.transformData(rawData, message);
-      
+
       const fingerprint = this.generateFingerprint(curatedData);
-      
+
       const existingCurated = await this.curatedRecordModel.findOne({
         fingerprint,
       });
@@ -93,8 +93,10 @@ export class ProcessingService {
 
       this.logger.log(`Successfully processed message: ${message.id}`);
     } catch (error) {
-      this.logger.error(`Failed to process message ${message.id}: ${error.message}`);
-      
+      this.logger.error(
+        `Failed to process message ${message.id}: ${error.message}`,
+      );
+
       await this.processingRecordModel.findOneAndUpdate(
         { messageId: message.id },
         {
@@ -110,7 +112,7 @@ export class ProcessingService {
 
   private transformData(rawData: any, message: ProcessMessage): any {
     const payload = rawData.payload || {};
-    
+
     return {
       sourceId: message.source,
       originalId: message.id,
@@ -135,22 +137,22 @@ export class ProcessingService {
       content: data.normalizedFields.content,
       author: data.normalizedFields.author,
     });
-    
+
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
       hash = (hash << 5) - hash + char;
       hash = hash & hash;
     }
-    
+
     return Math.abs(hash).toString(36);
   }
 
   async reprocessFromRaw(s3Key: string): Promise<void> {
     this.logger.log(`Reprocessing from raw data: ${s3Key}`);
-    
+
     const rawData = await this.storageService.getRawData(s3Key);
-    
+
     const message: ProcessMessage = {
       id: rawData.id,
       source: rawData.source,
@@ -173,6 +175,3 @@ export class ProcessingService {
     return Math.abs(hash).toString(36);
   }
 }
-
-
-

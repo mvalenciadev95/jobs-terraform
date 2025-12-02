@@ -3,7 +3,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ReportingService } from './reporting.service';
 import { ReportingController } from './reporting.controller';
 import { ReportingResolver } from './reporting.resolver';
-import { CuratedRecord, CuratedRecordSchema } from './schemas/curated-record.schema';
+import {
+  CuratedRecord,
+  CuratedRecordSchema,
+} from './schemas/curated-record.schema';
 
 @Module({
   imports: [
@@ -16,6 +19,3 @@ import { CuratedRecord, CuratedRecordSchema } from './schemas/curated-record.sch
   exports: [ReportingService],
 })
 export class ReportingModule {}
-
-
-

@@ -1,6 +1,15 @@
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleInit,
+  OnModuleDestroy,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SQSClient, ReceiveMessageCommand, DeleteMessageCommand, GetQueueAttributesCommand } from '@aws-sdk/client-sqs';
+import {
+  SQSClient,
+  ReceiveMessageCommand,
+  DeleteMessageCommand,
+} from '@aws-sdk/client-sqs';
 import { ProcessingService } from './processing.service';
 
 @Injectable()
@@ -17,16 +26,23 @@ export class QueueConsumerService implements OnModuleInit, OnModuleDestroy {
     private readonly configService: ConfigService,
     private readonly processingService: ProcessingService,
   ) {
-    this.useLocalStack = this.configService.get('USE_LOCALSTACK', 'false') === 'true';
+    this.useLocalStack =
+      this.configService.get('USE_LOCALSTACK', 'false') === 'true';
     this.queueUrl = this.configService.get('SQS_QUEUE_URL', '');
-    this.maxConcurrency = parseInt(this.configService.get('MAX_CONCURRENCY', '5'), 10);
+    this.maxConcurrency = parseInt(
+      this.configService.get('MAX_CONCURRENCY', '5'),
+      10,
+    );
 
     const sqsConfig: any = {
       region: this.configService.get('AWS_REGION', 'us-east-1'),
     };
 
     if (this.useLocalStack) {
-      sqsConfig.endpoint = this.configService.get('SQS_ENDPOINT', 'http://localhost:4566');
+      sqsConfig.endpoint = this.configService.get(
+        'SQS_ENDPOINT',
+        'http://localhost:4566',
+      );
       sqsConfig.credentials = {
         accessKeyId: 'test',
         secretAccessKey: 'test',
@@ -94,22 +110,27 @@ export class QueueConsumerService implements OnModuleInit, OnModuleDestroy {
 
   private async processMessage(message: any) {
     const receiptHandle = message.ReceiptHandle;
-    
+
     try {
       const messageBody = JSON.parse(message.Body);
-      
+
       await this.processingService.processMessage(messageBody);
-      
+
       await this.deleteMessage(receiptHandle);
-      
+
       this.logger.debug(`Processed and deleted message: ${messageBody.id}`);
     } catch (error) {
       this.logger.error(`Failed to process message: ${error.message}`);
-      
-      const retryCount = parseInt(message.Attributes?.ApproximateReceiveCount || '0', 10);
-      
+
+      const retryCount = parseInt(
+        message.Attributes?.ApproximateReceiveCount || '0',
+        10,
+      );
+
       if (retryCount >= 3) {
-        this.logger.error(`Message exceeded max retries, moving to DLQ: ${message.MessageId}`);
+        this.logger.error(
+          `Message exceeded max retries, moving to DLQ: ${message.MessageId}`,
+        );
         await this.deleteMessage(receiptHandle);
       }
     }
@@ -132,6 +153,3 @@ export class QueueConsumerService implements OnModuleInit, OnModuleDestroy {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
-
-
-
